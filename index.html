@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Platform Budget Optimizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Ad Platform Budget Optimizer</h1>
+        <div>
+            <span id="user-name">Admin User</span>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Data Sources</h2>
+                <button id="add-source-btn">Add New Source</button>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="connected">Connected Sources</div>
+                <div class="tab" data-tab="available">Available Integrations</div>
+            </div>
+            
+            <div id="connected-sources" class="tab-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Platform</th>
+                            <th>Account</th>
+                            <th>Status</th>
+                            <th>Last Update</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Meta Ads</td>
+                            <td>Business Manager XYZ</td>
+                            <td><span class="status status-success">Connected</span></td>
+                            <td>Yesterday, 15:30</td>
+                            <td>
+                                <button class="button-secondary">Refresh</button>
+                                <button class="button-secondary">Configure</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Google Ads</td>
+                            <td>Main Agency Account</td>
+                            <td><span class="status status-warning">Auth Expired</span></td>
+                            <td>3 days ago</td>
+                            <td>
+                                <button class="button-secondary">Reconnect</button>
+                                <button class="button-secondary">Configure</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="available-integrations" class="tab-content" style="display: none;">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Meta Ads</h3>
+                        <p>Connect Facebook and Instagram ad accounts</p>
+                        <button>Connect</button>
+                    </div>
+                    <div class="card">
+                        <h3>Google Ads</h3>
+                        <p>Connect Google Ads accounts and MCC</p>
+                        <button>Connect</button>
+                    </div>
+                    <div class="card">
+                        <h3>LinkedIn Ads</h3>
+                        <p>Connect LinkedIn Campaign Manager</p>
+                        <button>Connect</button>
+                    </div>
+                    <div class="card">
+                        <h3>TikTok Ads</h3>
+                        <p>Connect TikTok For Business accounts</p>
+                        <button>Connect</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>Performance Overview</h2>
+                <div>
+                    <select id="date-range">
+                        <option>Last 7 days</option>
+                        <option>Last 30 days</option>
+                        <option>Last 90 days</option>
+                        <option>Custom Range</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3>Total Spend</h3>
+                    <h2>$15,327.45</h2>
+                    <p>+12.5% vs previous period</p>
+                </div>
+                <div class="card">
+                    <h3>Conversions</h3>
+                    <h2>843</h2>
+                    <p>+8.2% vs previous period</p>
+                </div>
+                <div class="card">
+                    <h3>Average CPA</h3>
+                    <h2>$18.18</h2>
+                    <p>-3.4% vs previous period</p>
+                </div>
+                <div class="card">
+                    <h3>ROAS</h3>
+                    <h2>3.2x</h2>
+                    <p>+0.4x vs previous period</p>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="performance-chart"></canvas>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>Budget Optimization Recommendations</h2>
+                <button id="generate-recommendations">Generate New Recommendations</button>
+            </div>
+            
+            <div id="recommendations-container">
+                <div class="recommendations">
+                    <h3>Increase Meta Ads Budget on Campaign "Summer Collection"</h3>
+                    <p>This campaign has shown a ROAS of 4.5x over the last 7 days, which is 40% higher than your account average. Consider increasing daily budget by 20% to capitalize on performance.</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <div>
+                            <strong>Expected outcome:</strong> +125 conversions, +$5,200 revenue
+                        </div>
+                        <div>
+                            <button>Apply Change</button>
+                            <button class="button-secondary">Dismiss</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendations">
+                    <h3>Reduce Google Ads Budget on Campaign "Generic Keywords"</h3>
+                    <p>This campaign has a CPA of $35.20, which is 85% higher than your target CPA of $19. Consider reducing daily budget by 30% or reallocating to better performing campaigns.</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <div>
+                            <strong>Expected outcome:</strong> -$3,100 spend with minimal conversion loss
+                        </div>
+                        <div>
+                            <button>Apply Change</button>
+                            <button class="button-secondary">Dismiss</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendations">
+                    <h3>Split Test Ad Creative on Meta "Retargeting" Campaign</h3>
+                    <p>Your retargeting campaign has shown decreasing CTR over the past 14 days. We recommend testing new ad creative to combat audience fatigue.</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <div>
+                            <strong>Expected outcome:</strong> +15% CTR, +8% conversion rate
+                        </div>
+                        <div>
+                            <button>Create Test</button>
+                            <button class="button-secondary">Dismiss</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2>Platform Comparison</h2>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Spend</th>
+                        <th>Impressions</th>
+                        <th>Clicks</th>
+                        <th>CTR</th>
+                        <th>Conversions</th>
+                        <th>CPA</th>
+                        <th>ROAS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Meta Ads</td>
+                        <td>$8,432.45</td>
+                        <td>1,245,678</td>
+                        <td>34,567</td>
+                        <td>2.77%</td>
+                        <td>532</td>
+                        <td>$15.85</td>
+                        <td>3.8x</td>
+                    </tr>
+                    <tr>
+                        <td>Google Ads</td>
+                        <td>$5,895.00</td>
+                        <td>843,210</td>
+                        <td>28,450</td>
+                        <td>3.37%</td>
+                        <td>275</td>
+                        <td>$21.44</td>
+                        <td>2.6x</td>
+                    </tr>
+                    <tr>
+                        <td>LinkedIn Ads</td>
+                        <td>$1,000.00</td>
+                        <td>85,432</td>
+                        <td>3,210</td>
+                        <td>3.76%</td>
+                        <td>36</td>
+                        <td>$27.78</td>
+                        <td>3.1x</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Modal for adding new data source -->
+    <div id="add-source-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 100;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 2rem; border-radius: 8px; width: 500px;">
+            <h2 class="mb-4">Connect New Data Source</h2>
+            
+            <div class="form-group">
+                <label for="platform-select">Platform</label>
+                <select id="platform-select">
+                    <option>Meta Ads</option>
+                    <option>Google Ads</option>
+                    <option>LinkedIn Ads</option>
+                    <option>TikTok Ads</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="auth-method">Authentication Method</label>
+                <select id="auth-method">
+                    <option>OAuth</option>
+                    <option>API Key</option>
+                    <option>CSV Upload</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="account-name">Account Name</label>
+                <input type="text" id="account-name" placeholder="Enter account name/ID">
+            </div>
+            
+            <div class="flex justify-between">
+                <button class="button-secondary" id="close-modal">Cancel</button>
+                <button>Connect Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
