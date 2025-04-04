@@ -42,25 +42,110 @@ window.addEventListener('click', (event) => {
     }
 });
 
-// Simulate data for the chart
+// Chart Data
 document.addEventListener('DOMContentLoaded', function() {
-    // Mock function for chart - in a real app we'd use a library like Chart.js
+    // Get the chart canvas
     const chartCanvas = document.getElementById('performance-chart');
-    const ctx = chartCanvas.getContext('2d');
     
-    // Draw a simple placeholder chart
-    ctx.beginPath();
-    ctx.moveTo(0, 250);
+    // Sample data for the past 7 days
+    const dates = [];
+    const spendData = [];
+    const conversionsData = [];
     
-    // Draw a random line chart
-    for (let i = 0; i < chartCanvas.width; i += 20) {
-        const height = Math.random() * 100 + 100;
-        ctx.lineTo(i, 300 - height);
+    // Generate dates for the last 7 days
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        dates.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+        
+        // Generate random data
+        spendData.push(Math.floor(Math.random() * 1000) + 1500);
+        conversionsData.push(Math.floor(Math.random() * 50) + 70);
     }
     
-    ctx.strokeStyle = '#4361ee';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    // Create the chart
+    new Chart(chartCanvas, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [
+                {
+                    label: 'Daily Spend ($)',
+                    data: spendData,
+                    borderColor: '#4361ee',
+                    backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Conversions',
+                    data: conversionsData,
+                    borderColor: '#4cc9f0',
+                    backgroundColor: 'rgba(76, 201, 240, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    yAxisID: 'y1'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'index',
+                intersect: false,
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                        display: true,
+                        text: 'Spend ($)'
+                    }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                        display: true,
+                        text: 'Conversions'
+                    },
+                    grid: {
+                        drawOnChartArea: false
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.dataset.label === 'Daily Spend ($)') {
+                                label += '$' + context.parsed.y.toFixed(2);
+                            } else {
+                                label += context.parsed.y;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
     
     // Generate recommendations button functionality
     document.getElementById('generate-recommendations').addEventListener('click', function() {

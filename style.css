@@ -185,3 +185,62 @@ table th {
 .mb-4 {
     margin-bottom: 1rem;
 }
+
+/* Increase card padding */
+.card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;  /* Increased from 1.5rem */
+    margin-bottom: 2rem;
+}
+
+/* Add spacing to text elements */
+p {
+    margin-bottom: 1rem;
+    line-height: 1.6;  /* Improved line height */
+}
+
+h2, h3, h4 {
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+/* Improve spacing in table cells */
+table th, table td {
+    padding: 1rem;  /* Increased from 0.75rem */
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+    line-height: 1.5;
+}
+
+/* Improve spacing inside grid cards */
+.grid .card {
+    padding: 1.5rem;  /* Slightly smaller padding for grid cards */
+}
+
+/* Add more space between grid items */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;  /* Increased from 1.5rem */
+}
+
+/* Add more space to form elements */
+.form-group {
+    margin-bottom: 1.5rem;  /* Increased from 1rem */
+}
+
+/* Improve spacing in recommendations */
+.recommendations {
+    background-color: #f0f7ff;
+    border-left: 4px solid var(--primary);
+    padding: 1.5rem;  /* Increased from 1rem */
+    margin-bottom: 1.5rem;  /* Increased from 1rem */
+    line-height: 1.6;
+}
+
+/* Add spacing after headings in recommendations */
+.recommendations h3 {
+    margin-bottom: 1rem;
+}
