@@ -1,0 +1,181 @@
+:root {
+    --primary: #0069ff;
+    --primary-light: #e1ebff;
+    --dark: #333;
+    --light: #f5f5f5;
+    --border: #ddd;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.intro {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#auth-section {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.auth-button {
+    display: inline-block;
+    background-color: var(--primary);
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.auth-button:hover {
+    background-color: #0052cc;
+}
+
+/* Rest of the CSS remains the same as in your original HTML */
+.calendly-inputs {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.calendly-link {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0052cc;
+}
+
+button.remove {
+    background-color: #ff4d4d;
+}
+
+button.remove:hover {
+    background-color: #e60000;
+}
+
+.date-filter {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.date-filter label {
+    font-weight: bold;
+}
+
+.results {
+    margin-top: 20px;
+}
+
+.date-slots {
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.date-header {
+    background-color: var(--primary-light);
+    padding: 10px;
+    font-weight: bold;
+}
+
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    padding: 15px;
+}
+
+.time-slot {
+    background-color: var(--primary);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.time-slot:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status {
+    text-align: center;
+    margin: 10px 0;
+    font-style: italic;
+}
+
+.error {
+    color: #ff4d4d;
+    margin: 10px 0;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .calendly-link {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .date-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

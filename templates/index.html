@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Calendly Availability Checker</title>
     <style>
         :root {
@@ -170,8 +171,15 @@
 <body>
     <div class="container">
         <h1>Calendly Availability Checker</h1>
+        <div id="auth-section" style="text-align: center; margin-bottom: 20px;">
+            <p>You need to authenticate with Calendly to use this application.</p>
+            <button id="login-button" onclick="window.location.href='/login'">Login with Calendly</button>
+        </div>
+
+        <div id="app-section" style="display: none;"></div>
         <p class="intro">Enter multiple Calendly links to find common available slots across all calendars.</p>
-        
+        <div id="app-section" style="display: none;">
+
         <div class="calendly-inputs" id="calendly-inputs">
             <div class="calendly-link">
                 <input type="text" placeholder="Enter Calendly link (e.g., https://calendly.com/username/30min)" class="link-input">
@@ -198,6 +206,7 @@
         <div id="status" class="status"></div>
         <div id="error" class="error"></div>
         <div id="results" class="results"></div>
+      </div>
     </div>
     
     <script>
@@ -432,6 +441,26 @@
             const date = new Date(isoString);
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
+    
+        // Check authentication status when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+          fetch('/auth-status')
+            .then(response => response.json())
+            .then(data => {
+              if (data.authenticated) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('app-section').style.display = 'block';
+                document.getElementById('status').textContent = `Logged in as ${data.user} (${data.email})`;
+              } else {
+                document.getElementById('auth-section').style.display = 'block';
+                document.getElementById('app-section').style.display = 'none';
+              }
+        })
+        .catch(error => {
+            console.error('Error checking auth status:', error);
+        });
+        });
     </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
