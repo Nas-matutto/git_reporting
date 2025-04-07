@@ -3,279 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ad Platform Budget Optimizer</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Calendly Availability Checker</title>
+    <style>
+        :root {
+            --primary: #0069ff;
+            --primary-light: #e1ebff;
+            --dark: #333;
+            --light: #f5f5f5;
+            --border: #ddd;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .intro {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .calendly-inputs {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .calendly-link {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #0052cc;
+        }
+        
+        button.remove {
+            background-color: #ff4d4d;
+        }
+        
+        button.remove:hover {
+            background-color: #e60000;
+        }
+        
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .date-filter label {
+            font-weight: bold;
+        }
+        
+        .results {
+            margin-top: 20px;
+        }
+        
+        .date-slots {
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .date-header {
+            background-color: var(--primary-light);
+            padding: 10px;
+            font-weight: bold;
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 15px;
+        }
+        
+        .time-slot {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .time-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status {
+            text-align: center;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #ff4d4d;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 600px) {
+            .calendly-link {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .date-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Ad Platform Budget Optimizer</h1>
-        <div>
-            <span id="user-name">Admin User</span>
-        </div>
-    </header>
-    
     <div class="container">
-        <div class="card">
-            <div class="card-header">
-                <h2>Data Sources</h2>
-                <button id="add-source-btn">Add New Source</button>
+        <h1>Calendly Availability Checker</h1>
+        <p class="intro">Enter multiple Calendly links to find common available slots across all calendars.</p>
+        
+        <div class="calendly-inputs" id="calendly-inputs">
+            <div class="calendly-link">
+                <input type="text" placeholder="Enter Calendly link (e.g., https://calendly.com/username/30min)" class="link-input">
+                <button class="remove">Remove</button>
             </div>
-            
-            <div class="tabs">
-                <div class="tab active" data-tab="connected">Connected Sources</div>
-                <div class="tab" data-tab="available">Available Integrations</div>
-            </div>
-            
-            <div id="connected-sources" class="tab-content">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Platform</th>
-                            <th>Account</th>
-                            <th>Status</th>
-                            <th>Last Update</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Meta Ads</td>
-                            <td>Business Manager XYZ</td>
-                            <td><span class="status status-success">Connected</span></td>
-                            <td>Yesterday, 15:30</td>
-                            <td>
-                                <button class="button-secondary">Refresh</button>
-                                <button class="button-secondary">Configure</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Google Ads</td>
-                            <td>Main Agency Account</td>
-                            <td><span class="status status-warning">Auth Expired</span></td>
-                            <td>3 days ago</td>
-                            <td>
-                                <button class="button-secondary">Reconnect</button>
-                                <button class="button-secondary">Configure</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div id="available-integrations" class="tab-content" style="display: none;">
-                <div class="grid">
-                    <div class="card">
-                        <h3>Meta Ads</h3>
-                        <p>Connect Facebook and Instagram ad accounts</p>
-                        <button>Connect</button>
-                    </div>
-                    <div class="card">
-                        <h3>Google Ads</h3>
-                        <p>Connect Google Ads accounts and MCC</p>
-                        <button>Connect</button>
-                    </div>
-                    <div class="card">
-                        <h3>LinkedIn Ads</h3>
-                        <p>Connect LinkedIn Campaign Manager</p>
-                        <button>Connect</button>
-                    </div>
-                    <div class="card">
-                        <h3>TikTok Ads</h3>
-                        <p>Connect TikTok For Business accounts</p>
-                        <button>Connect</button>
-                    </div>
-                    <div class="card">
-                        <h3>Snapchat Ads</h3>
-                        <p>Connect Snapchat For Business accounts</p>
-                        <button>Connect</button>
-                    </div>
-                </div>
+            <div class="calendly-link">
+                <input type="text" placeholder="Enter Calendly link (e.g., https://calendly.com/username/30min)" class="link-input">
+                <button class="remove">Remove</button>
             </div>
         </div>
         
-        <div class="card">
-            <div class="card-header">
-                <h2>Performance Overview</h2>
-                <div>
-                    <select id="date-range">
-                        <option>Last 7 days</option>
-                        <option>Last 30 days</option>
-                        <option>Last 90 days</option>
-                        <option>Custom Range</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="grid">
-                <div class="card">
-                    <h3>Total Spend</h3>
-                    <h2>$15,327.45</h2>
-                    <p>+12.5% vs previous period</p>
-                </div>
-                <div class="card">
-                    <h3>Conversions</h3>
-                    <h2>843</h2>
-                    <p>+8.2% vs previous period</p>
-                </div>
-                <div class="card">
-                    <h3>Average CPA</h3>
-                    <h2>$18.18</h2>
-                    <p>-3.4% vs previous period</p>
-                </div>
-                <div class="card">
-                    <h3>ROAS</h3>
-                    <h2>3.2x</h2>
-                    <p>+0.4x vs previous period</p>
-                </div>
-            </div>
-            
-            <div class="chart-container">
-                <canvas id="performance-chart"></canvas>
-            </div>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button id="add-link">Add Another Link</button>
         </div>
         
-        <div class="card">
-            <div class="card-header">
-                <h2>Budget Optimization Recommendations</h2>
-                <button id="generate-recommendations">Generate New Recommendations</button>
-            </div>
-            
-            <div id="recommendations-container">
-                <div class="recommendations">
-                    <h3>Increase Meta Ads Budget on Campaign "Summer Collection"</h3>
-                    <p>This campaign has shown a ROAS of 4.5x over the last 7 days, which is 40% higher than your account average. Consider increasing daily budget by 20% to capitalize on performance.</p>
-                    <div class="flex justify-between items-center mt-4">
-                        <div>
-                            <strong>Expected outcome:</strong> +125 conversions, +$5,200 revenue
-                        </div>
-                        <div>
-                            <button>Apply Change</button>
-                            <button class="button-secondary">Dismiss</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="recommendations">
-                    <h3>Reduce Google Ads Budget on Campaign "Generic Keywords"</h3>
-                    <p>This campaign has a CPA of $35.20, which is 85% higher than your target CPA of $19. Consider reducing daily budget by 30% or reallocating to better performing campaigns.</p>
-                    <div class="flex justify-between items-center mt-4">
-                        <div>
-                            <strong>Expected outcome:</strong> -$3,100 spend with minimal conversion loss
-                        </div>
-                        <div>
-                            <button>Apply Change</button>
-                            <button class="button-secondary">Dismiss</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="recommendations">
-                    <h3>Split Test Ad Creative on Meta "Retargeting" Campaign</h3>
-                    <p>Your retargeting campaign has shown decreasing CTR over the past 14 days. We recommend testing new ad creative to combat audience fatigue.</p>
-                    <div class="flex justify-between items-center mt-4">
-                        <div>
-                            <strong>Expected outcome:</strong> +15% CTR, +8% conversion rate
-                        </div>
-                        <div>
-                            <button>Create Test</button>
-                            <button class="button-secondary">Dismiss</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="date-filter">
+            <label for="start-date">Start Date:</label>
+            <input type="date" id="start-date">
+            <label for="end-date">End Date:</label>
+            <input type="date" id="end-date">
+            <button id="find-slots">Find Available Slots</button>
         </div>
         
-        <div class="card">
-            <div class="card-header">
-                <h2>Platform Comparison</h2>
-            </div>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>Platform</th>
-                        <th>Spend</th>
-                        <th>Impressions</th>
-                        <th>Clicks</th>
-                        <th>CTR</th>
-                        <th>Conversions</th>
-                        <th>CPA</th>
-                        <th>ROAS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Meta Ads</td>
-                        <td>$8,432.45</td>
-                        <td>1,245,678</td>
-                        <td>34,567</td>
-                        <td>2.77%</td>
-                        <td>532</td>
-                        <td>$15.85</td>
-                        <td>3.8x</td>
-                    </tr>
-                    <tr>
-                        <td>Google Ads</td>
-                        <td>$5,895.00</td>
-                        <td>843,210</td>
-                        <td>28,450</td>
-                        <td>3.37%</td>
-                        <td>275</td>
-                        <td>$21.44</td>
-                        <td>2.6x</td>
-                    </tr>
-                    <tr>
-                        <td>LinkedIn Ads</td>
-                        <td>$1,000.00</td>
-                        <td>85,432</td>
-                        <td>3,210</td>
-                        <td>3.76%</td>
-                        <td>36</td>
-                        <td>$27.78</td>
-                        <td>3.1x</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <div id="status" class="status"></div>
+        <div id="error" class="error"></div>
+        <div id="results" class="results"></div>
     </div>
     
-    <!-- Modal for adding new data source -->
-    <div id="add-source-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 100;">
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 2rem; border-radius: 8px; width: 500px;">
-            <h2 class="mb-4">Connect New Data Source</h2>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default dates
+            const today = new Date();
+            const twoWeeksLater = new Date();
+            twoWeeksLater.setDate(today.getDate() + 14);
             
-            <div class="form-group">
-                <label for="platform-select">Platform</label>
-                <select id="platform-select">
-                    <option>Meta Ads</option>
-                    <option>Google Ads</option>
-                    <option>LinkedIn Ads</option>
-                    <option>TikTok Ads</option>
-                    <option>Snapchat Ads</option>
-                </select>
-            </div>
+            document.getElementById('start-date').valueAsDate = today;
+            document.getElementById('end-date').valueAsDate = twoWeeksLater;
             
-            <div class="form-group">
-                <label for="auth-method">Authentication Method</label>
-                <select id="auth-method">
-                    <option>OAuth</option>
-                    <option>API Key</option>
-                    <option>CSV Upload</option>
-                </select>
-            </div>
+            // Event listeners
+            document.getElementById('add-link').addEventListener('click', addCalendlyLink);
+            document.getElementById('find-slots').addEventListener('click', findAvailableSlots);
             
-            <div class="form-group">
-                <label for="account-name">Account Name</label>
-                <input type="text" id="account-name" placeholder="Enter account name/ID">
-            </div>
+            // Setup initial remove buttons
+            document.querySelectorAll('.remove').forEach(button => {
+                button.addEventListener('click', function() {
+                    const inputs = document.querySelectorAll('.calendly-link');
+                    if (inputs.length > 1) {
+                        this.parentElement.remove();
+                    } else {
+                        document.getElementById('error').textContent = 'You need at least one Calendly link.';
+                        setTimeout(() => {
+                            document.getElementById('error').textContent = '';
+                        }, 3000);
+                    }
+                });
+            });
+        });
+        
+        function addCalendlyLink() {
+            const inputsContainer = document.getElementById('calendly-inputs');
+            const newLink = document.createElement('div');
+            newLink.className = 'calendly-link';
+            newLink.innerHTML = `
+                <input type="text" placeholder="Enter Calendly link (e.g., https://calendly.com/username/30min)" class="link-input">
+                <button class="remove">Remove</button>
+            `;
             
-            <div class="flex justify-between">
-                <button class="button-secondary" id="close-modal">Cancel</button>
-                <button>Connect Account</button>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
+            newLink.querySelector('.remove').addEventListener('click', function() {
+                const inputs = document.querySelectorAll('.calendly-link');
+                if (inputs.length > 1) {
+                    this.parentElement.remove();
+                } else {
+                    document.getElementById('error').textContent = 'You need at least one Calendly link.';
+                    setTimeout(() => {
+                        document.getElementById('error').textContent = '';
+                    }, 3000);
+                }
+            });
+            
+            inputsContainer.appendChild(newLink);
+        }
+        
+        async function findAvailableSlots() {
+            const statusDiv = document.getElementById('status');
+            const errorDiv = document.getElementById('error');
+            const resultsDiv = document.getElementById('results');
+            
+            // Clear previous results
+            statusDiv.textContent = 'Searching for available slots...';
+            errorDiv.textContent = '';
+            resultsDiv.innerHTML = '';
+            
+            // Get inputs
+            const linkInputs = document.querySelectorAll('.link-input');
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            
+            // Validate inputs
+            const calendlyLinks = [];
+            for (const input of linkInputs) {
+                if (input.value.trim() === '') {
+                    errorDiv.textContent = 'Please fill in all Calendly links.';
+                    statusDiv.textContent = '';
+                    return;
+                }
+                
+                // Extract username and event type from Calendly link
+                try {
+                    const url = new URL(input.value.trim());
+                    if (!url.hostname.includes('calendly.com')) {
+                        throw new Error('Not a valid Calendly link');
+                    }
+                    
+                    const pathParts = url.pathname.split('/').filter(part => part);
+                    if (pathParts.length < 2) {
+                        throw new Error('Invalid Calendly link format');
+                    }
+                    
+                    calendlyLinks.push({
+                        username: pathParts[0],
+                        eventType: pathParts[1]
+                    });
+                } catch (error) {
+                    errorDiv.textContent = `Invalid Calendly link: ${input.value.trim()}`;
+                    statusDiv.textContent = '';
+                    return;
+                }
+            }
+            
+            if (!startDate || !endDate) {
+                errorDiv.textContent = 'Please select both start and end dates.';
+                statusDiv.textContent = '';
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                errorDiv.textContent = 'End date must be after start date.';
+                statusDiv.textContent = '';
+                return;
+            }
+            
+            try {
+                // This is a simulation since we can't directly access Calendly's API from client-side
+                // In a real implementation, this would call your backend API that interacts with Calendly's API
+                const availableSlots = await simulateFetchAvailability(calendlyLinks, startDate, endDate);
+                
+                if (Object.keys(availableSlots).length === 0) {
+                    statusDiv.textContent = 'No common available slots found in the selected date range.';
+                    return;
+                }
+                
+                // Display results
+                statusDiv.textContent = 'Available slots found!';
+                
+                // Sort dates
+                const sortedDates = Object.keys(availableSlots).sort();
+                
+                for (const date of sortedDates) {
+                    const dateSlots = document.createElement('div');
+                    dateSlots.className = 'date-slots';
+                    
+                    const dateHeader = document.createElement('div');
+                    dateHeader.className = 'date-header';
+                    dateHeader.textContent = formatDate(date);
+                    dateSlots.appendChild(dateHeader);
+                    
+                    const timeSlots = document.createElement('div');
+                    timeSlots.className = 'time-slots';
+                    
+                    availableSlots[date].forEach(slot => {
+                        const timeSlot = document.createElement('div');
+                        timeSlot.className = 'time-slot';
+                        timeSlot.textContent = formatTime(slot);
+                        timeSlots.appendChild(timeSlot);
+                    });
+                    
+                    dateSlots.appendChild(timeSlots);
+                    resultsDiv.appendChild(dateSlots);
+                }
+            } catch (error) {
+                errorDiv.textContent = `Error: ${error.message}`;
+                statusDiv.textContent = '';
+            }
+        }
+        
+        // This function simulates fetching availability from Calendly
+        // In a real implementation, this would be replaced with actual API calls to your backend
+        async function simulateFetchAvailability(calendlyLinks, startDate, endDate) {
+            // This is where you would normally make API calls to Calendly or your backend
+            // For demonstration purposes, we'll generate random availability
+            
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const result = {};
+                    const start = new Date(startDate);
+                    const end = new Date(endDate);
+                    
+                    // Generate dates between start and end
+                    for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
+                        const dateString = date.toISOString().split('T')[0];
+                        
+                        // Skip weekends for this simulation
+                        const dayOfWeek = date.getDay();
+                        if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+                        
+                        // Generate possible time slots for this date
+                        const possibleSlots = [];
+                        const startHour = 9; // 9 AM
+                        const endHour = 17; // 5 PM
+                        
+                        for (let hour = startHour; hour < endHour; hour++) {
+                            for (let minute = 0; minute < 60; minute += 30) {
+                                const timeSlot = new Date(date);
+                                timeSlot.setHours(hour, minute, 0, 0);
+                                possibleSlots.push(timeSlot.toISOString());
+                            }
+                        }
+                        
+                        // Simulate availability for each Calendly link
+                        const availabilities = calendlyLinks.map(() => {
+                            // Randomly select some slots as available (60-80% of slots)
+                            const availableSlots = [];
+                            const availabilityPercentage = Math.random() * 0.2 + 0.6; // Between 60% and 80%
+                            
+                            possibleSlots.forEach(slot => {
+                                if (Math.random() < availabilityPercentage) {
+                                    availableSlots.push(slot);
+                                }
+                            });
+                            
+                            return availableSlots;
+                        });
+                        
+                        // Find slots available in all calendars
+                        const commonSlots = possibleSlots.filter(slot => 
+                            availabilities.every(availability => 
+                                availability.includes(slot)
+                            )
+                        );
+                        
+                        if (commonSlots.length > 0) {
+                            result[dateString] = commonSlots;
+                        }
+                    }
+                    
+                    resolve(result);
+                }, 1500); // Simulate API delay
+            });
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString(undefined, options);
+        }
+        
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+    </script>
 </body>
 </html>
