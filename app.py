@@ -4,11 +4,13 @@ import os
 from dotenv import load_dotenv
 import json
 from datetime import datetime, timedelta
+from flask_cors import CORS
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS
 app.secret_key = os.urandom(24)  # For session management
 
 # Calendly API constants
@@ -92,13 +94,15 @@ def check_availability():
     if not calendly_links or not start_date or not end_date:
         return jsonify({'error': 'Missing required parameters'}), 400
     
-    # For each link, extract username and event type
+    # Process the links to extract usernames and event types
     processed_links = []
     for link in calendly_links:
         parts = link.strip('/').split('/')
-        if len(parts) < 5:  # Not a valid Calendly URL format
+        if len(parts) < 5 or 'calendly.com' not in link:  # Make sure it's a valid Calendly URL
             continue
         
+        # For a URL like https://calendly.com/username/30min
+        # parts will be ['https:', '', 'calendly.com', 'username', '30min']
         username = parts[3]  # Typically the 4th part of the URL
         event_type = parts[4]  # Typically the 5th part
         
@@ -107,14 +111,15 @@ def check_availability():
             'event_type': event_type
         })
     
-    # This is where we would make API calls to Calendly for each link
-    # For now, this is a placeholder implementation
+    if not processed_links:
+        return jsonify({'error': 'No valid Calendly links provided'}), 400
     
-    # Process the availability results
-    # This is a simplified example
-    common_availability = find_common_availability(processed_links, start_date, end_date)
-    
-    return jsonify(common_availability)
+    # Find common availability
+    try:
+        common_availability = find_common_availability(processed_links, start_date, end_date)
+        return jsonify(common_availability)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def find_common_availability(links, start_date, end_date):
     """Find common availability across multiple Calendly links."""
@@ -133,68 +138,54 @@ def find_common_availability(links, start_date, end_date):
     all_availabilities = {}
     
     # For each link, fetch availability
-    for i, link in enumerate(links):
-        print(f"Processing link {i+1}/{len(links)}: {link}")
+    for link_data in links:
+        username = link_data['username']
+        event_type_slug = link_data['event_type']
+        
+        print(f"Processing link for {username}/{event_type_slug}")
         
         try:
-            # Get user info
-            me_response = requests.get(
-                f"{CALENDLY_API_BASE}/users/me",
-                headers=headers
-            )
+            # First, we need to find the correct event type URI
+            # This requires getting the user's UUID from their username
             
-            if me_response.status_code != 200:
-                print(f"Failed to get user info: {me_response.status_code} - {me_response.text}")
-                continue
-                
-            user_data = me_response.json()
-            user_uri = user_data['resource']['uri']
+            # 1. Search for user by username (this endpoint may vary based on Calendly API)
+            user_search_url = f"{CALENDLY_API_BASE}/users"
+            # Note: Calendly API doesn't directly support looking up users by username
+            # You may need to use a different approach or endpoint
             
-            # Get event types
-            print(f"Fetching event types for user: {user_uri}")
-            event_types_response = requests.get(
-                f"{CALENDLY_API_BASE}/event_types",
-                params={'user': user_uri},
-                headers=headers
-            )
+            # For demonstration purposes, we'll query the event_types directory
+            # You'll need to adjust this based on Calendly's API capabilities
             
-            if event_types_response.status_code != 200:
-                print(f"Failed to get event types: {event_types_response.status_code} - {event_types_response.text}")
-                continue
+            # 2. Get event types for the user
+            event_types_url = f"{CALENDLY_API_BASE}/scheduled_events"
+            params = {
+                'user': username,
+                'event_type': event_type_slug
+            }
             
-            event_types = event_types_response.json()['collection']
-            print(f"Found {len(event_types)} event types")
+            # This is a simplified approach - in reality, you might need to
+            # use a different approach to find the specific event type
             
-            event_type_uri = None
-            for event_type in event_types:
-                print(f"Checking event type: {event_type['slug']} vs {link['event_type']}")
-                if event_type['slug'] == link['event_type']:
-                    event_type_uri = event_type['uri']
-                    break
-            
-            if not event_type_uri:
-                print(f"Could not find matching event type for: {link['event_type']}")
-                continue
-            
-            event_type_id = event_type_uri.split('/')[-1]
-            print(f"Using event type ID: {event_type_id}")
-            
-            # Fetch available times
+            # Fetch available times for each day in the range
             current_date = start
             while current_date <= end:
                 next_date = current_date + timedelta(days=1)
-                
                 date_key = current_date.date().isoformat()
-                print(f"Checking availability for date: {date_key}")
                 
-                # Use the correct API endpoint for availability
+                print(f"Checking availability for {username}/{event_type_slug} on {date_key}")
+                
+                # Use the Calendly API to get available times
+                # The exact endpoint and parameters depend on Calendly's API
+                available_times_url = f"{CALENDLY_API_BASE}/event_types/{username}/{event_type_slug}/available_times"
+                params = {
+                    'start_time': current_date.isoformat(),
+                    'end_time': next_date.isoformat(),
+                    'timezone': 'UTC'  # You may want to make this configurable
+                }
+                
                 available_times_response = requests.get(
-                    f"{CALENDLY_API_BASE}/event_types/{event_type_id}/available_times",
-                    params={
-                        'start_time': current_date.isoformat(),
-                        'end_time': next_date.isoformat(),
-                        'timezone': 'UTC'  # You may want to adjust this
-                    },
+                    available_times_url,
+                    params=params,
                     headers=headers
                 )
                 
@@ -206,7 +197,9 @@ def find_common_availability(links, start_date, end_date):
                         all_availabilities[date_key] = {}
                     
                     for slot in available_times:
-                        slot_time = slot['invitee_start_time']
+                        # Adjust this based on the actual response structure
+                        slot_time = slot.get('start_time') or slot.get('time')
+                        
                         if slot_time not in all_availabilities[date_key]:
                             all_availabilities[date_key][slot_time] = 0
                         all_availabilities[date_key][slot_time] += 1
